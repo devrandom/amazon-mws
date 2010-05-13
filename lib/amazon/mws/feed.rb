@@ -18,7 +18,8 @@ module Amazon
         message_type= message_type.to_s.camelize
         raise InvalidMessageType if !MESSAGE_TYPES.include?(message_type)
   
-        body = Amazon::MWS::FeedBuilder.new(message_type, message).render
+        raise "Missing merchant_id" unless @merchant_id
+        body = Amazon::MWS::FeedBuilder.new(message_type, message, {:merchant_id => @merchant_id}).render
         
         response =
           post("/", {
@@ -203,7 +204,7 @@ module Amazon
       # The identifier of the feed submission to get results for. Obtained
       # by a call to GetFeedSubmissionList.
       
-      def get_feed_submission_result(feed_submission_id)
+      def get_feed_submission_result(feed_submission_id, params = {})
         response = 
         get("/", {
           "Action"           => "GetFeedSubmissionResult", 
