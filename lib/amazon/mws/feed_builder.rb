@@ -11,10 +11,10 @@ module Amazon
         "Delete"  
       ])
   
-      def initialize(message_type, message = {}, params = {})
+      def initialize(message_type, messages = [], params = {})
         @xml = Builder::XmlMarkup.new 
         @message_type = message_type
-        @message = message
+        @messages = messages
         @params = params
       end
       
@@ -25,7 +25,9 @@ module Amazon
           # header
           render_header(@params)
           # message      
-          render_message(@message, @params)
+          @messages.each do |message|
+            render_message(message, @params)
+          end
         end
       end
   
@@ -38,7 +40,7 @@ module Amazon
       def render_envelope(params = {})      
         @xml.EffectiveDate Time.now
         @xml.MessageID
-        @xml.MessageType(params[:message_type])
+        @xml.MessageType(params[:message_type].to_s)
         @xml.OperationType(params[:operation_type]) if params[:operation_type]
         @xml.PurgeAndReplace(params[:purge] || false)
       end

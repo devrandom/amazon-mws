@@ -18,10 +18,10 @@ module Amazon
         message_type= message_type.to_s.camelize
         raise InvalidMessageType if !MESSAGE_TYPES.include?(message_type)
   
-        body = Amazon::MWS::FeedBuilder.new(message_type, message)
+        body = Amazon::MWS::FeedBuilder.new(message_type, message).render
         
-        response = 
-        post("/", {
+        response =
+          post("/", {
           "Action"   => "SubmitFeed", 
           "FeedType" => FEED_TYPES[feed_type]
         }, body)
